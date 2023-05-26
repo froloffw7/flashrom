@@ -240,7 +240,7 @@ enum probe_func {
 	PROBE_JEDEC = 1,
 	PROBE_JEDEC_29GL,
 	PROBE_OPAQUE,
-	PROBE_EDI_KB9012,
+	PROBE_EDI_KB90XX,
 	PROBE_AT82802AB,
 	PROBE_W29EE011,
 	PROBE_EN29LV640B,
@@ -254,6 +254,7 @@ enum probe_func {
 	PROBE_SPI_RES2,
 	PROBE_SPI_SFDP,
 	PROBE_SPI_ST95,
+	PROBE_SPI_NAND,
 };
 
 enum write_func {
@@ -269,6 +270,7 @@ enum write_func {
 	WRITE_82802AB,
 	WRITE_EN29LV640B,
 	EDI_CHIP_WRITE,
+	SPI_NAND_WRITE,
 	TEST_WRITE_INJECTOR, /* special case must come last. */
 };
 typedef int (write_func_t)(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
@@ -281,6 +283,7 @@ enum read_func {
 	EDI_CHIP_READ,
 	SPI_READ_AT45DB,
 	SPI_READ_AT45DB_E8,
+	SPI_NAND_READ,
 	TEST_READ_INJECTOR, /* special case must come last. */
 };
 typedef int (read_func_t)(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
@@ -322,6 +325,7 @@ enum block_erase_func {
 	ERASE_SECTOR_49LFXXXC,
 	STM50_SECTOR_ERASE,
 	EDI_CHIP_BLOCK_ERASE,
+	SPI_NAND_BLOCK_ERASE,
 	TEST_ERASE_INJECTOR, /* special case must come last. */
 };
 
@@ -351,6 +355,7 @@ enum blockprotect_func {
 	UNLOCK_LH28F008BJT,
 	UNLOCK_SST_FWHUB,
 	UNPROTECT_28SF040,
+	SPI_NAND_DISABLE_BLOCKPROTECT,
 };
 
 enum printlock_func {
@@ -397,6 +402,7 @@ enum printlock_func {
 	SPI_PRETTYPRINT_STATUS_REGISTER_SST25,
 	SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF016,
 	SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF040B,
+	PRINTLOCK_SPI_NAND, // TODO
 };
 typedef int (printlockfunc_t)(struct flashctx *flash);
 printlockfunc_t *lookup_printlock_func_ptr(struct flashctx *flash);

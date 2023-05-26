@@ -21,7 +21,6 @@
 /*
  * Contains the SPI NAND headers
  */
-
 enum {SPI_NAND_HW_ECC = -1, SPI_NAND_SW_ECC0, SPI_NAND_SW_ECC1, SPI_NAND_SW_ECC2 };
 
 /* NAND flags */
@@ -111,10 +110,6 @@ enum {SPI_NAND_HW_ECC = -1, SPI_NAND_SW_ECC0, SPI_NAND_SW_ECC1, SPI_NAND_SW_ECC2
 #define JEDEC_NAND_SET_FEATURE		0x1F
 #define JEDEC_NAND_SET_FEATURE_OUTSIZE	0x03
 #define JEDEC_NAND_SET_FEATURE_INSIZE	0x00
-
-/* Parameter Page Magic */
-const uint8_t spi_nand_magic0[] = {0x4E, 0x41, 0x4E, 0x44};  // NAND - Kioxia
-const uint8_t spi_nand_magic1[] = {0x4F, 0x4E, 0x46, 0x49};  // ONFI - Micron/Winbond
 
 struct nand_param_page {
 	/* offset 0 */
