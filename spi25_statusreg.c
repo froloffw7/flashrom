@@ -945,6 +945,8 @@ blockprotect_func_t *lookup_blockprotect_func_ptr(const struct flashchip *const 
 			return lookup_82802ab_blockprotect_func_ptr(chip);
 		case UNLOCK_SST_FWHUB: return unlock_sst_fwhub; /* sst_fwhub.c */
 		case UNPROTECT_28SF040: return unprotect_28sf040; /* sst28sf040.c */
+
+		case SPI_NAND_DISABLE_BLOCKPROTECT: return NULL; // TODO
 	/* default: non-total function, 0 indicates no unlock function set.
 	 * We explicitly do not want a default catch-all case in the switch
 	 * to ensure unhandled enum's are compiler warnings.
@@ -1080,6 +1082,8 @@ printlockfunc_t *lookup_printlock_func_ptr(struct flashctx *flash)
 		case SPI_PRETTYPRINT_STATUS_REGISTER_SST25: return &spi_prettyprint_status_register_sst25;
 		case SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF016: return &spi_prettyprint_status_register_sst25vf016;
 		case SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF040B: return &spi_prettyprint_status_register_sst25vf040b;
+
+		case PRINTLOCK_SPI_NAND: return NULL; // TODO
 	/* default: non-total function, 0 indicates no unlock function set.
 	 * We explicitly do not want a default catch-all case in the switch
 	 * to ensure unhandled enum's are compiler warnings.

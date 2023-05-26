@@ -3617,16 +3617,16 @@ const struct flashchip flashchips[] = {
 		.voltage	= {4500, 5500},
 	},
 
-	{
+	{   /* some parameters set by probing function */
 		.vendor		= "ENE",
-		.name		= "KB9012 (EDI)",
+		.name		= "ENE (EDI) Chip",
 		.bustype	= BUS_SPI,
 		.total_size	= 128,
 		.page_size	= 128,
 		.feature_bits	= FEATURE_ERASED_ZERO,
 		.tested		= TEST_OK_PREW,
 		.spi_cmd_set	= SPI_EDI,
-		.probe		= PROBE_EDI_KB9012,
+		.probe		= PROBE_EDI_KB90XX,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
 		{
@@ -20808,9 +20808,9 @@ const struct flashchip flashchips[] = {
 		.total_size	= 0,
 		.page_size	= 0,
 		.tested		= TEST_OK_PR,
-		.probe		= probe_spi_nand,
-		.write		= 0, // spi_nand_write
-		.read		= spi_nand_read
+		.probe		= PROBE_SPI_NAND,
+		.write		= SPI_NAND_WRITE,
+		.read		= SPI_NAND_READ,
 	},
 
 	{

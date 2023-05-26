@@ -14,14 +14,14 @@
  */
 
 /*
- * Contains the SPI NAND ECC functions
+ * Contains the SPI NAND chip driver functions
  */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "chipdrivers.h"
+#include "spi_nand.h"
 #include "bch.h"
 
 /***********************************************
@@ -38,14 +38,12 @@
 
 int spi_nand_ecc_encode(void *ecc_ctx, uint8_t *page_buffer, uint8_t mode)
 {
-	// Not implemented yet
-	return 0;
+	return 0; // No correction fullfiled
 }
 
 int spi_nand_ecc_decode(void *ecc_ctx, uint8_t *page_buffer, uint8_t mode)
 {
-	// Not implemented yet
-	return 0;
+	return 0; // No correction fullfiled
 }
 
 void *spi_nand_ecc_init(uint8_t mode)

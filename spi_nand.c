@@ -2,7 +2,6 @@
  * This file is part of the flashrom project.
  *
  * Copyright (C) 2022 Yangfl
- * Copyright (C) 2023 froloff
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +45,10 @@ struct nand_chip_data {
 	unsigned config; // TODO
 	void *ecc;
 };
+
+/* Parameter Page Magic */
+const uint8_t spi_nand_magic0[] = {0x4E, 0x41, 0x4E, 0x44};  // NAND - Kioxia
+const uint8_t spi_nand_magic1[] = {0x4F, 0x4E, 0x46, 0x49};  // ONFI - Micron/Winbond
 
 /* For error number */
 static int errno;
@@ -336,7 +339,7 @@ static int spi_nand_page_data_program(struct flashctx *flash, unsigned row_addr)
 }
 
 
-static int spi_nand_program_page(struct flashctx *flash, unsigned page, uint8_t *src, unsigned len)
+static int spi_nand_program_page(struct flashctx *flash, unsigned page, const uint8_t *src, unsigned len)
 {
 	/* Read data */
 	uint8_t cmd[1 + JEDEC_NAND_COLUMN_ADDR_LEN + JEDEC_NAND_PAGE_SIZE] = { JEDEC_NAND_PROGRAM_LOAD, 0, 0};
@@ -362,7 +365,7 @@ static int spi_nand_program_page(struct flashctx *flash, unsigned page, uint8_t 
 }
 
 
-int spi_nand_write(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len)
+int spi_nand_write(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len)
 {
 	struct nand_chip_data *data = (struct nand_chip_data *)flash->chip->data;
 	uint8_t *page_buf = data->page_buf;
@@ -423,7 +426,7 @@ static int spi_nand_get_parameters(struct flashctx *flash, uint8_t m_id, uint16_
 
 	hexdump("SPI NAND Parameters Page", param_page, sizeof(struct nand_param_page));
 
-	// TODO? Check Page Signature 
+	// TODO Check Page Signature, check Integrity CRC
 
 	char *vendor = strndup_endwith((const char *)params->manufacturer, sizeof(params->manufacturer), ' ');
 	char *name = strndup_endwith((const char *)params->model, sizeof(params->model), ' ');

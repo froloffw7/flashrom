@@ -442,6 +442,7 @@ erasefunc_t *lookup_erase_func_ptr(const struct block_eraser *const eraser)
 		case ERASE_SECTOR_49LFXXXC: return &erase_sector_49lfxxxc;
 		case STM50_SECTOR_ERASE: return &erase_sector_stm50; // TODO rename to &stm50_sector_erase;
 		case EDI_CHIP_BLOCK_ERASE: return &edi_chip_block_erase;
+		case SPI_NAND_BLOCK_ERASE: return NULL; // &spi_nand_block_erase; // TODO
 		case TEST_ERASE_INJECTOR: return g_test_erase_injector;
 	/* default: total function, 0 indicates no erase function set.
 	 * We explicitly do not want a default catch-all case in the switch
@@ -552,6 +553,7 @@ static read_func_t *lookup_read_func_ptr(const struct flashchip *chip)
 		case EDI_CHIP_READ: return &edi_chip_read;
 		case SPI_READ_AT45DB: return spi_read_at45db;
 		case SPI_READ_AT45DB_E8: return spi_read_at45db_e8;
+		case SPI_NAND_READ: return &spi_nand_read;
 		case TEST_READ_INJECTOR: return g_test_read_injector;
 	/* default: total function, 0 indicates no read function set.
 	 * We explicitly do not want a default catch-all case in the switch
@@ -992,6 +994,7 @@ static write_func_t *lookup_write_func_ptr(const struct flashchip *chip)
 		case WRITE_82802AB: return &write_82802ab;
 		case WRITE_EN29LV640B: return &write_en29lv640b;
 		case EDI_CHIP_WRITE: return &edi_chip_write;
+		case SPI_NAND_WRITE: return &spi_nand_write;
 		case TEST_WRITE_INJECTOR: return g_test_write_injector;
 	/* default: total function, 0 indicates no write function set.
 	 * We explicitly do not want a default catch-all case in the switch
@@ -1064,7 +1067,7 @@ static probe_func_t *lookup_probe_func_ptr(const struct flashchip *chip)
 		case PROBE_JEDEC: return &probe_jedec;
 		case PROBE_JEDEC_29GL: return &probe_jedec_29gl;
 		case PROBE_OPAQUE: return &probe_opaque;
-		case PROBE_EDI_KB9012: return &edi_probe_kb9012;
+		case PROBE_EDI_KB90XX: return &edi_probe_kb90xx;
 		case PROBE_AT82802AB: return &probe_82802ab;
 		case PROBE_W29EE011: return &probe_w29ee011;
 		case PROBE_EN29LV640B: return &probe_en29lv640b;
@@ -1078,6 +1081,7 @@ static probe_func_t *lookup_probe_func_ptr(const struct flashchip *chip)
 		case PROBE_SPI_RES2: return &probe_spi_res2;
 		case PROBE_SPI_SFDP: return &probe_spi_sfdp;
 		case PROBE_SPI_ST95: return &probe_spi_st95;
+		case PROBE_SPI_NAND: return &probe_spi_nand;
 		/* default: total function, 0 indicates no probe function set.
 		 * We explicitly do not want a default catch-all case in the switch
 		 * to ensure unhandled enum's are compiler warnings.
