@@ -43,6 +43,12 @@
 #define ENE_KB9012_HWVERSION		0xc3
 #define ENE_KB9012_EDIID		0x04
 
+#define ENE_KB9022_HWVERSION		0xc0
+#define ENE_KB9022_EDIID		0x07
+
+#define ENE_KB9028_HWVERSION		0xb1
+#define ENE_KB9028_EDIID		0x07
+
 struct ene_chip {
 	unsigned char hwversion;
 	unsigned char ediid;

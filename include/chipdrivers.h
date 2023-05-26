@@ -166,7 +166,7 @@ int write_en29lv640b(struct flashctx *flash, const uint8_t *buf, unsigned int st
 int edi_chip_block_erase(struct flashctx *flash, unsigned int page, unsigned int size);
 int edi_chip_write(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
 int edi_chip_read(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
-int edi_probe_kb9012(struct flashctx *flash);
+int edi_probe_kb90xx(struct flashctx *flash);
 
 /* spi95.c */
 int probe_spi_st95(struct flashctx *flash);
@@ -175,7 +175,8 @@ int spi_block_erase_emulation(struct flashctx *flash, unsigned int addr, unsigne
 /* spi_nand.c */
 int probe_spi_nand(struct flashctx *flash);
 int spi_nand_read(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
-int spi_nand_write(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
+int spi_nand_write(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
+int spi_nand_block_erase(struct flashctx *flash, unsigned int page, unsigned int size);
 
 int spi_nand_set_ecc_mode(struct flashctx *flash, int ecc_mode);
 /* spi_nand_ecc.c */
