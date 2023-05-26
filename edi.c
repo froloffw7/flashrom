@@ -2,6 +2,7 @@
  * This file is part of the flashrom project.
  *
  * Copyright (C) 2015 Paul Kocialkowski <contact@paulk.fr>
+ * Copyright (C) 2023 froloff
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +22,6 @@
 #include "edi.h"
 
 static unsigned int edi_read_buffer_length = EDI_READ_BUFFER_LENGTH_DEFAULT;
-
-static const struct ene_chip ene_kb9012 = {
-	.hwversion = ENE_KB9012_HWVERSION,
-	.ediid = ENE_KB9012_EDIID,
-};
 
 static void edi_write_cmd(unsigned char *cmd, unsigned short address, unsigned char data)
 {
@@ -144,7 +140,7 @@ static int edi_disable(struct flashctx *flash)
 	return 0;
 }
 
-static int edi_chip_probe(struct flashctx *flash, const struct ene_chip *chip)
+static int edi_probe_chip(struct flashctx *flash, struct ene_chip *chip)
 {
 	unsigned char hwversion;
 	unsigned char ediid;
@@ -164,10 +160,10 @@ static int edi_chip_probe(struct flashctx *flash, const struct ene_chip *chip)
 
 	msg_cdbg("%s: hwversion 0x%02x, ediid 0x%02x\n", __func__, hwversion, ediid);
 
-	if (chip->hwversion == hwversion && chip->ediid == ediid)
-		return 1;
+	chip->ediid     = ediid;
+	chip->hwversion = hwversion;
 
-	return 0;
+	return 1;
 }
 
 static int edi_spi_enable(struct flashctx *flash)
@@ -483,11 +479,12 @@ static int edi_shutdown(void *data)
 	return 0;
 }
 
-int edi_probe_kb9012(struct flashctx *flash)
+int edi_probe_kb90xx(struct flashctx *flash)
 {
 	int probe;
 	int rc;
 	unsigned char hwversion;
+	struct ene_chip chip;
 
 	/*
 	 * ENE chips enable EDI by detecting a clock frequency between 1 MHz and
@@ -500,9 +497,23 @@ int edi_probe_kb9012(struct flashctx *flash)
 	 */
 	edi_read(flash, ENE_EC_HWVERSION, &hwversion);
 
-	probe = edi_chip_probe(flash, &ene_kb9012);
+	probe = edi_probe_chip(flash, &chip);
 	if (!probe)
 		return 0;
+
+	if ((chip.hwversion == ENE_KB9012_HWVERSION) && (chip.ediid == ENE_KB9012_EDIID)) {
+		msg_cdbg("%s: ENE Chip: kb9012q\n", __func__);
+		flash->chip->name = "KB9012 (EDI)";
+	} else if ((chip.hwversion == ENE_KB9022_HWVERSION) && (chip.ediid == ENE_KB9022_EDIID)) {
+		msg_cdbg("%s: ENE Chip: kb9022\n", __func__);
+		flash->chip->name = "KB9022 (EDI)";
+	} else if ((chip.hwversion == ENE_KB9028_HWVERSION) && (chip.ediid == ENE_KB9028_EDIID)) {
+		msg_cdbg("%s: ENE Chip: kb9028q\n", __func__);
+		flash->chip->name = "KB9028 (EDI)";
+	} else {
+		msg_perr("%s: Unknown ENE chip!\n", __func__);
+		return 0;
+	}
 
 	rc = edi_8051_reset(flash);
 	if (rc < 0) {
