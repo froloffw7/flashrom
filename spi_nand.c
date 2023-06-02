@@ -2,6 +2,7 @@
  * This file is part of the flashrom project.
  *
  * Copyright (C) 2022 Yangfl
+ * Copyright (C) 2023 froloff
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,9 @@
 #include "spi_nand.h"
 
 #define __DEBUG_NAND__
-#define __DUMP_RAW_NAND__
+// #define __DUMP_RAW_NAND__
+#define __NAND_ECC_AX3__
+
 /***************************************
  * UTIL FUNCTIONS
  ***************************************/
@@ -308,7 +311,10 @@ int spi_nand_read(struct flashctx *flash, uint8_t *buf, unsigned int start, unsi
 			if (ret) return ret;
 			if (data->ecc) {
 				// HW error correction Off. Correct errors
-				// spi_nand_ecc_decode(data->ecc, page_buf, data->ecc_mode);
+				ret = spi_nand_ecc_decode(data->ecc, page_buf, data->ecc_mode);
+				if (ret < 0) {
+					msg_perr("%s Software ECC error %d", __FUNCTION__, ret);
+				}
 			}
 			memcpy(buf, page_buf, to_read);
 		} else {
@@ -478,6 +484,9 @@ static int spi_nand_probe_rdid(struct flashctx *flash, uint8_t *m_id, uint16_t *
 	msg_cdbg("%s spi_send_command() ret=%d\n", __FUNCTION__, ret);
 	if (ret) return ret;
 
+	if (!oddparity(rdid[0]))
+		msg_cdbg("RDID byte 0 parity violation. ");
+
 	msg_ginfo("NAND RDID [");
 	for (i = 0; i < JEDEC_RDID_INSIZE; i++)
 		msg_ginfo(" 0x%02x", rdid[i]);
@@ -565,6 +574,8 @@ int probe_spi_nand(struct flashctx *flash)
 	// Restore default configuration
 	spi_nand_write_config_register(flash, JEDEC_NAND_REG_CONFIG, config_b0);
 	spi_nand_update_bits(flash, config_b0);
-
+#ifdef __NAND_ECC_AX3__
+	spi_nand_set_ecc_mode(flash, SPI_NAND_SW_ECC0);
+#endif
 	return 1;
 }
